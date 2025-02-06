@@ -6,7 +6,7 @@ use Exception;
 
 class FootballApiService
 {
-    protected $apiUrl = 'https://v3.football.api-sports.io/';
+    protected $apiUrl = 'https://api.football-data.org/';
     protected $apiKey;
 
     public function __construct()
@@ -27,7 +27,7 @@ class FootballApiService
             CURLOPT_URL => $url,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_HTTPHEADER => [
-                "x-apisports-key: {$this->apiKey}" // ✅ Corrigido o nome do header
+                "X-Auth-Token: {$this->apiKey}"
             ],
         ]);
     
@@ -50,26 +50,36 @@ class FootballApiService
 
         // Caso ocorra de ter erros na API
         if ($httpCode != 200) throw new Exception("Houve um erro de conexão com a API!");
-
-        // Se houver msg de erro, exibe a primeira
-        if (!empty($decodedResponse['errors']) && count($decodedResponse['errors']) > 0) {
-            //dd($decodedResponse['errors']);
-            foreach ($decodedResponse['errors'] as $value)  throw new Exception($value);
-        }
     
         return $decodedResponse;
     }
 
     public function getLeagues()
     {
-        return $this->request('leagues');
+        return $this->request('v4/competitions');
     }
 
-    public function getResults($leagueId, $season, $last = 5)
+    
+    public function getTeams()
     {
-        return $this->request('fixtures', [
-            'league' => $leagueId,
-            'season' => $season,
+        return $this->request('v4/teams', [
+            'limit' => '100',
+            'offset' => '100',
         ]);
+    }
+
+    public function getResults($request)
+    {
+        $url = 'v4/teams';
+
+        if (!empty($request->leagueCode)) {
+            $url = 'v4/teams/'.$request->leagueCode.'/matches';
+        }
+
+        if (!empty($request->teamCode)) {
+
+        }
+
+        return $this->request($url);
     }
 }

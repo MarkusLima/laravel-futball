@@ -25,9 +25,9 @@
                     <div class="col-md-6">
                         <label class="form-label">Liga</label>
                         <select name="league_id" class="form-select" required>
-                            @if (!empty($leagues['response']) && count($leagues['response']) > 0)
-                                @foreach ($leagues['response'] as $league)
-                                    <option value="{{ $league['league']['id'] }}">{{ $league['league']['name'] }}</option>
+                            @if (!empty($leagues['competitions']) && count($leagues['competitions']) > 0)
+                                @foreach ($leagues['competitions'] as $league)
+                                    <option value="{{ $league['id'] }}">{{ $league['name'] }}</option>
                                 @endforeach
                             @else
                                 <option disabled>Nenhuma liga disponível</option>
