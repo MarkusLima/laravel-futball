@@ -2,25 +2,28 @@ window.onload = fetData;
 
 async function fetData() {
     const leagues = await getLeagues();
-    //const teams = await getTeams();
 
-    console.log(leagues)
-    //console.log(teams)
-
-
-    if (!leagues || !leagues.body || !leagues.body.competitions) {
+    if (!leagues || !leagues.body) {
         alert("Erro ao buscar as ligas.");
         return;
     }
 
-    // if (!teams || !teams.body || !teams.body.teams) {
-    //     alert("Erro ao buscar as times.");
-    //     return;
-    // }
+    showSelect(leagues.body, "#league_id");
+}
 
-    showSelect(leagues.body.competitions, "#league_id");
+async function changeSelectCompetition() {
 
-    //showSelect(teams.body.teams, "#team_id");
+    const competitionId = document.querySelector("#league_id").value;
+    if (!competitionId) return;
+
+    const teams = await getTeams(competitionId);
+
+    if (!teams || !teams.body) {
+        alert("Erro ao buscar as times.");
+        return;
+    }
+
+    showSelect(teams.body, "#team_id");
 }
 
 function showSelect(body, element) {
@@ -51,23 +54,23 @@ function showGamesBody(games) {
     listElement.innerHTML = "";
 
     for (let index = 0; index < games.length; index++) {
-        const timeAway = games[index].awayTeam && games[index].awayTeam.shortName ? games[index].awayTeam.shortName : "----";
-        const timeHome = games[index].homeTeam && games[index].homeTeam.shortName ? games[index].homeTeam.shortName : "----";
+        const timeAway = games[index].time_fora ? games[index].time_fora : "----";
+        const timeHome = games[index].time_casa ? games[index].time_casa : "----";
 
-        const timeAwayScore = games[index].score && games[index].score.fullTime && games[index].score.fullTime.away ? games[index].score.fullTime.away : "----";
-        const timeHomeScore = games[index].score && games[index].score.fullTime && games[index].score.fullTime.home ? games[index].score.fullTime.home : "----";
+        const timeAwayScore = games[index].placar && games[index].placar.time_fora ? games[index].placar.time_fora : "0";
+        const timeHomeScore = games[index].placar && games[index].placar.time_casa ? games[index].placar.time_casa : "0";
 
-        const stage = games[index].stage ? games[index].stage : "----";
+        const stage = games[index].estadio ? games[index].estadio : "----";
 
-        const date = games[index].utcDate ? games[index].utcDate : "----";
+        const date = games[index].data ? games[index].data : "----";
 
-        list += `<div class="col-md-6 col-lg-4">
+        list += `<div class="col-md-3 col-lg-3">
                     <div class="card shadow-sm mb-4">
                         <div class="card-body text-center">
-                            <h5 class="card-title">${timeAway} ${timeAwayScore} vs ${timeHomeScore} ${timeHome}</h5>
+                            <h5 class="card-title"> ${timeAway} ${timeAwayScore} vs ${timeHomeScore} ${timeHome} </h5>
                             <p class="card-text">
-                                <strong>Data:</strong>${stage}<br>
-                                <strong>Local:</strong>${date}
+                                <strong>Data:</strong> ${stage} <br>
+                                <strong>Local:</strong> ${date}
                             </p>
                         </div>
                     </div>
@@ -89,10 +92,10 @@ async function getLeagues() {
     }
 }
 
-async function getTeams() {
+async function getTeams(competitionId) {
 
     try {
-        const response = await fetch("/api/teams");
+        const response = await fetch("/api/teams?competitionId="+competitionId);
         const result = await response.json();
         return result;
     } catch (error) {
@@ -121,14 +124,14 @@ async function showGames() {
     if (!leagueValue && !teamValue) alert("Prezado, por favor selecione um campeonato ou time para sua pesquisa");
 
     const gamesLeagues = await getGamesLeagues(leagueValue, teamValue);
-    console.log(gamesLeagues)
 
-    if (!gamesLeagues || !gamesLeagues.body || !gamesLeagues.body.matches) {
+    if (!gamesLeagues || !gamesLeagues.body) {
         alert("Erro ao buscar os matches.");
         return;
     }
-    showGamesBody(gamesLeagues.body.matches);
+    showGamesBody(gamesLeagues.body);
     
 }
 
-document.getElementById("show_games").addEventListener('click', showGames)
+document.getElementById("show_games").addEventListener('click', showGames);
+document.getElementById("league_id").addEventListener('change', changeSelectCompetition);

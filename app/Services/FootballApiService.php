@@ -6,13 +6,7 @@ use Exception;
 
 class FootballApiService
 {
-    protected $apiUrl = 'https://api.football-data.org/';
-    protected $apiKey;
-
-    public function __construct()
-    {
-        $this->apiKey = env('API_FOOTBALL_KEY');
-    }
+    protected $apiUrl = 'https://api.mkbits.com.br/';
 
     private function request($endpoint, $params = [])
     {
@@ -26,9 +20,6 @@ class FootballApiService
         curl_setopt_array($curl, [
             CURLOPT_URL => $url,
             CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_HTTPHEADER => [
-                "X-Auth-Token: {$this->apiKey}"
-            ],
         ]);
     
         $response = curl_exec($curl);
@@ -56,28 +47,25 @@ class FootballApiService
 
     public function getLeagues()
     {
-        return $this->request('v4/competitions');
+        return $this->request('?action=competitions');
     }
 
     
-    public function getTeams()
+    public function getTeams($request)
     {
-        return $this->request('v4/teams', [
-            'limit' => '100',
-            'offset' => '100',
-        ]);
+        return $this->request('?action=times&competition='.$request->competitionId);
     }
 
     public function getResults($request)
     {
-        $url = 'v4/teams';
+        $url = '?action=matches';
 
         if (!empty($request->leagueCode)) {
-            $url = 'v4/teams/'.$request->leagueCode.'/matches';
+            $url = '?action=matches&competition='.$request->leagueCode;
         }
 
-        if (!empty($request->teamCode)) {
-
+        if (!empty($request->leagueCode) && !empty($request->teamCode)) {
+            $url = '?action=matches&competition='.$request->leagueCode.'&time='.$request->teamCode;
         }
 
         return $this->request($url);

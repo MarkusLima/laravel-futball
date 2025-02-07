@@ -26,9 +26,9 @@ class FootballController extends Controller
         ], 200);
     }
 
-    public function teams()
+    public function teams(Request $request)
     {
-        $teams = $this->footballApi->getTeams();
+        $teams = $this->footballApi->getTeams($request);
         
         return response()->json([
             'body' => $teams,

@@ -34,7 +34,7 @@
                 </form>
             </div>
         </div>
-        <div class="card">
+        <div class="card mt-3">
             <div class="card-header"><label>Jogos</label></div>
             <div class="card-body">
                 <div class="row" id="list_games">
