@@ -29,3 +29,5 @@ Retorna os jogos desta competição
 
 https://api.mkbits.com.br?action=matches&competition=1&time=1
 Retorna os jogos desta competição com time especifico
+
+![App Screenshot](/Captura_de_tela.jpg)
