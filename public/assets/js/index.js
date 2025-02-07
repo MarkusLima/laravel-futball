@@ -69,8 +69,8 @@ function showGamesBody(games) {
                         <div class="card-body text-center">
                             <h5 class="card-title"> ${timeAway} ${timeAwayScore} vs ${timeHomeScore} ${timeHome} </h5>
                             <p class="card-text">
-                                <strong>Data:</strong> ${stage} <br>
-                                <strong>Local:</strong> ${date}
+                                <strong>Local:</strong> ${stage} <br>
+                                <strong>Data:</strong> ${date}
                             </p>
                         </div>
                     </div>
